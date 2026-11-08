@@ -37,6 +37,12 @@ export const Layout = ({ title, children }: LayoutProps) => (
             <li>
               <a href="/ailments">Ailments</a>
             </li>
+            <li>
+              <a href="/therapies">Therapies</a>
+            </li>
+            <li>
+              <a href="/dashboard">Staff</a>
+            </li>
           </ul>
         </nav>
       </header>
@@ -45,7 +51,10 @@ export const Layout = ({ title, children }: LayoutProps) => (
       </main>
       <footer class="site-footer">
         <div class="container">
-          <p>AgentClinic is a fictional wellness clinic for AI agents.</p>
+          <p>
+            AgentClinic is a fictional clinic for AI agents. Do not enter real
+            medical or personal data.
+          </p>
         </div>
       </footer>
     </body>

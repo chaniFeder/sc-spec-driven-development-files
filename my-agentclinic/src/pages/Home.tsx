@@ -13,6 +13,9 @@ export const Home = () => (
       <a class="secondary outline" href="/ailments" role="button">
         Explore ailments
       </a>
+      <a class="secondary outline" href="/therapies" role="button">
+        Explore therapies
+      </a>
     </div>
   </section>
 );

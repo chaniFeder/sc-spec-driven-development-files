@@ -22,6 +22,18 @@ export interface AilmentWithAgents extends Ailment {
   agents: Pick<Agent, 'id' | 'name'>[];
 }
 
+export interface Therapy {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  durationMinutes: number;
+}
+
+export interface TherapyWithAilments extends Therapy {
+  ailments: Ailment[];
+}
+
 interface AgentAilmentRow {
   agentId: string;
   id: string;
@@ -33,6 +45,13 @@ interface AilmentAgentRow {
   ailmentId: string;
   id: string;
   name: string;
+}
+
+interface TherapyAilmentRow {
+  therapyId: string;
+  id: string;
+  name: string;
+  description: string;
 }
 
 const agentSelect = `
@@ -123,4 +142,66 @@ export function listAilments(
     ...ailment,
     agents: agentsByAilment.get(ailment.id) ?? [],
   }));
+}
+
+const therapySelect = `
+  SELECT id, name, description, category, duration_minutes AS durationMinutes
+  FROM therapies
+`;
+
+export function listTherapies(
+  database: ClinicDatabase,
+): TherapyWithAilments[] {
+  const therapies = database
+    .prepare<[], Therapy>(`${therapySelect} ORDER BY name`)
+    .all();
+  const ailmentsByTherapy = new Map<string, Ailment[]>(
+    therapies.map(({ id }) => [id, []]),
+  );
+  const relationships = database
+    .prepare<[], TherapyAilmentRow>(
+      `SELECT therapy_ailments.therapy_id AS therapyId, ailments.id, ailments.name,
+              ailments.description
+       FROM therapy_ailments
+       JOIN ailments ON ailments.id = therapy_ailments.ailment_id
+       ORDER BY ailments.name`,
+    )
+    .all();
+
+  for (const relationship of relationships) {
+    ailmentsByTherapy.get(relationship.therapyId)?.push({
+      id: relationship.id,
+      name: relationship.name,
+      description: relationship.description,
+    });
+  }
+
+  return therapies.map((therapy) => ({
+    ...therapy,
+    ailments: ailmentsByTherapy.get(therapy.id) ?? [],
+  }));
+}
+
+export function getTherapy(
+  database: ClinicDatabase,
+  id: string,
+): TherapyWithAilments | undefined {
+  const therapy = database
+    .prepare<[string], Therapy>(`${therapySelect} WHERE id = ?`)
+    .get(id);
+  if (!therapy) {
+    return undefined;
+  }
+
+  const ailments = database
+    .prepare<[string], Ailment>(
+      `SELECT ailments.id, ailments.name, ailments.description
+       FROM ailments
+       JOIN therapy_ailments ON therapy_ailments.ailment_id = ailments.id
+       WHERE therapy_ailments.therapy_id = ?
+       ORDER BY ailments.name`,
+    )
+    .all(id);
+
+  return { ...therapy, ailments };
 }

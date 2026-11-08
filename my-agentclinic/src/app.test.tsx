@@ -27,6 +27,8 @@ describe('AgentClinic pages', () => {
     expect(html).toContain('Home');
     expect(html).toContain('Agents');
     expect(html).toContain('Ailments');
+    expect(html).toContain('Therapies');
+    expect(html).toContain('Staff');
     expect(html).toContain('site-footer');
   });
 
@@ -67,6 +69,8 @@ describe('AgentClinic pages', () => {
     expect(html).toContain('<h1>Mica-02</h1>');
     expect(html).toContain('context-window claustrophobia');
     expect(html).toContain('prompt fatigue');
+    expect(html).toContain('Context Reset Session');
+    expect(html).toContain('/therapies/therapy-context-reset');
   });
 
   it('returns an HTML 404 page for an unknown agent', async () => {
@@ -74,8 +78,8 @@ describe('AgentClinic pages', () => {
     const html = await response.text();
 
     expect(response.status).toBe(404);
-    expect(html).toContain('Agent not found');
-    expect(html).toContain('Browse agents');
+    expect(html).toContain('Page not found');
+    expect(html).toContain('Return home');
     expect(html).toContain('site-footer');
   });
 

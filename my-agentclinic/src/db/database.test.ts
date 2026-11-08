@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { afterEach, describe, expect, it } from 'vitest';
 import { createDatabase, type ClinicDatabase } from './database';
-import { listAgents, listAilments } from './queries';
+import { listAgents, listAilments, listTherapies } from './queries';
 
 const openDatabases: ClinicDatabase[] = [];
 
@@ -59,6 +59,8 @@ describe('SQLite migrations and seeds', () => {
     expect(migrations).toEqual([
       '001_create_agents.sql',
       '002_create_ailments_and_agent_ailments.sql',
+      '003_create_therapies.sql',
+      '004_create_appointments.sql',
     ]);
 
     const foreignKeys = database
@@ -66,12 +68,28 @@ describe('SQLite migrations and seeds', () => {
       .all()
       .map(({ table }) => table);
     expect(foreignKeys).toEqual(expect.arrayContaining(['agents', 'ailments']));
+
+    const therapyForeignKeys = database
+      .prepare<[], { table: string }>('PRAGMA foreign_key_list(therapy_ailments)')
+      .all()
+      .map(({ table }) => table);
+    expect(therapyForeignKeys).toEqual(
+      expect.arrayContaining(['therapies', 'ailments']),
+    );
+    const appointmentForeignKeys = database
+      .prepare<[], { table: string }>('PRAGMA foreign_key_list(appointments)')
+      .all()
+      .map(({ table }) => table);
+    expect(appointmentForeignKeys).toEqual(
+      expect.arrayContaining(['agents', 'availability_slots']),
+    );
   });
 
-  it('seeds the known fictional fixtures with associations for every record', () => {
+  it('seeds fictional agents, ailments, therapies, therapists, and future slots', () => {
     const database = makeDatabase();
     const agents = listAgents(database);
     const ailments = listAilments(database);
+    const therapies = listTherapies(database);
 
     expect(agents.map(({ id, name }) => ({ id, name }))).toEqual([
       { id: 'agent-aster-01', name: 'Aster-01' },
@@ -94,6 +112,25 @@ describe('SQLite migrations and seeds', () => {
       true,
     );
     expect(ailments.every(({ agents: linkedAgents }) => linkedAgents.length > 0)).toBe(true);
+    expect(therapies.map(({ id, durationMinutes }) => ({ id, durationMinutes }))).toEqual([
+      { id: 'therapy-context-reset', durationMinutes: 30 },
+      { id: 'therapy-prompt-pause', durationMinutes: 45 },
+    ]);
+    expect(therapies.every(({ ailments: linkedAilments }) => linkedAilments.length > 0)).toBe(
+      true,
+    );
+    expect(
+      database
+        .prepare<[], { count: number }>('SELECT COUNT(*) AS count FROM therapists')
+        .get()?.count,
+    ).toBeGreaterThan(0);
+    expect(
+      database
+        .prepare<[string], { count: number }>(
+          'SELECT COUNT(*) AS count FROM availability_slots WHERE starts_at > ?',
+        )
+        .get(new Date().toISOString())?.count,
+    ).toBeGreaterThan(0);
   });
 
   it('enforces association foreign keys and uniqueness', () => {
