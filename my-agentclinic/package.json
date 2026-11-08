@@ -14,12 +14,18 @@
   "license": "ISC",
   "dependencies": {
     "@hono/node-server": "1.19.12",
+    "@picocss/pico": "^2.1.1",
+    "better-sqlite3": "^13.0.3",
     "hono": "4.12.9"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^26.6.6",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
     "vitest": "^5.1.0"
+  },
+  "allowScripts": {
+    "better-sqlite3@13.0.3": true
   }
 }
