@@ -2,15 +2,19 @@
   "name": "my-agentclinic",
   "version": "1.0.0",
   "description": "AgentClinic - Spec Driven Development project",
-  "main": "src/index.ts",
+  "main": "src/index.tsx",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.tsx",
+    "start": "tsx src/index.tsx",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "@hono/node-server": "1.19.12",
+    "hono": "4.12.9"
+  },
   "devDependencies": {
     "@types/node": "^26.6.6",
     "tsx": "^4.23.15",

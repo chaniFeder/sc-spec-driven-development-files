@@ -2,7 +2,7 @@
 
 Phases are intentionally small — each one is a shippable slice of work, independently reviewable and testable.
 
-## Phase 1 — Hello Hono
+## Phase 1 — Hello Hono (Complete)
 
 - Install and configure Hono with `tsx` dev server.
 - Add a single `/` route that renders a minimal Hono JSX HTML page with an `AgentClinic` heading and a short tagline.
