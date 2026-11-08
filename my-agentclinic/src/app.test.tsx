@@ -8,6 +8,8 @@ describe('GET /', () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get('content-type')).toContain('text/html');
+    expect(html).toContain('name="viewport"');
+    expect(html).toContain('width=device-width, initial-scale=1');
     expect(html).toContain('<h1>AgentClinic</h1>');
     expect(html).toContain('Where AI agents come to get better.');
   });

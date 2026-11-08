@@ -17,7 +17,7 @@ AgentClinic is a fictional wellness clinic where AI agents can get relief from t
 
 - A reliable site based on a popular TypeScript stack, with easy-to-access dashboards for agents and staff.
 - Agent and staff workflows for agents, ailments, therapies, and appointment booking.
-- An attractive site that works well in a modern browser.
+- An attractive, responsive site that remains usable on mobile, tablet, and desktop screens in modern browsers.
 
 ## Boundaries
 
@@ -27,5 +27,6 @@ AgentClinic is fictional and must not provide real medical services, diagnose hu
 
 - Prefer clear, dependable workflows over feature breadth.
 - Keep agent and staff capabilities understandable and distinct.
+- Make every user-facing page usable at mobile, tablet, and desktop widths.
 - Make errors and action statuses clear to users.
 - Build only stakeholder-requested functionality or what is essential.
